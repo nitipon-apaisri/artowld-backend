@@ -4,14 +4,15 @@ import app from "../app";
 import { beforeAll, afterAll } from "@jest/globals";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
-import { simpleUser } from "../database/simpleData";
+import { simpleSignin, simpleUser } from "../database/simpleData";
 
 let token: string;
 beforeAll(async () => {
     const mongoServer = await MongoMemoryServer.create();
     await mongoose.connect(mongoServer.getUri(), { dbName: "testDB" });
     await request(app).post("/api/v1/user/signup").send(simpleUser).set("Accept", "application/json").set("Content-Type", "application/json");
-    const res = await request(app).post("/api/v1/users/signin").send(simpleUser).set("Accept", "application/json").set("Content-Type", "application/json");
+    const res = await request(app).post("/api/v1/user/signin").send(simpleSignin).set("Accept", "application/json").set("Content-Type", "application/json");
+    console.log(res.body);
     token = res.body.token;
 });
 afterAll(async () => {

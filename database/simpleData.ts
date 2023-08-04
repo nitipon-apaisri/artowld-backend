@@ -9,5 +9,8 @@ const simpleUser: userType = {
     createdAt: new Date(),
     updatedAt: new Date(),
 };
-
-export { simpleUser };
+const simpleSignin = {
+    email: "john.doe@mail.com",
+    password: "123456",
+};
+export { simpleUser, simpleSignin };
