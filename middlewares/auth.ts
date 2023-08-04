@@ -9,13 +9,15 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
         const token = authorization.replace("Bearer ", "");
         const verify = jwt.verify(token, JWT_SECRET as string);
         const findUser = await userModel.findById(JSON.parse(JSON.stringify(verify))._id);
-        if (findUser?.email !== JSON.parse(JSON.stringify(verify)).email) {
+        if (findUser?.email === JSON.parse(JSON.stringify(verify)).email) {
             try {
                 req.user = verify;
             } catch (error) {
-                res.status(403).json({ message: "Invalid credentials" });
+                console.log(error);
+                res.status(500).json({ message: "Internal server error" });
             }
-            res.status(403).json({ message: "Invalid credentials" });
+        } else {
+            res.status(401).json({ message: "Unauthorized" });
         }
     } else {
         res.status(401).json({ message: "Unauthorized" });
