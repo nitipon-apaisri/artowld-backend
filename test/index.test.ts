@@ -10,7 +10,7 @@ let token: string;
 beforeAll(async () => {
     const mongoServer = await MongoMemoryServer.create();
     await mongoose.connect(mongoServer.getUri(), { dbName: "testDB" });
-    await request(app).post("/api/v1/users/signup").send(simpleUser).set("Accept", "application/json").set("Content-Type", "application/json");
+    await request(app).post("/api/v1/user/signup").send(simpleUser).set("Accept", "application/json").set("Content-Type", "application/json");
     const res = await request(app).post("/api/v1/users/signin").send(simpleUser).set("Accept", "application/json").set("Content-Type", "application/json");
     token = res.body.token;
 });
