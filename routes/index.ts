@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { getHelloworldController } from "../controllers/exempleController";
+
 import { userRegister, userSignin, userNameUpdate, getUsers, userDelete, getUser } from "../controllers/userController";
 import { auth } from "../middlewares/auth";
 const router = Router();
-router.get("/helloworld", getHelloworldController);
+
 router.get("/users", auth, getUsers);
 router.get("/user/:id", auth, getUser);
 router.post("/user/signup", userRegister);
