@@ -42,7 +42,8 @@ describe("User", () => {
         expect(response.status).toBe(200);
     });
     test("should return 200 after delete user", async () => {
-        const response = await request(app).delete("/api/v1/user/1").send().set("Authorization", `Bearer ${token}`).set("Accept", "application/json").set("Content-Type", "application/json");
+        const userId = JSON.stringify(jwt.verify(token, process.env.JWT_SECRET as string));
+        const response = await request(app).delete(`/api/v1/user/${userId}`).set("Authorization", `Bearer ${token}`).set("Accept", "application/json").set("Content-Type", "application/json");
         expect(response.status).toBe(200);
     });
 });

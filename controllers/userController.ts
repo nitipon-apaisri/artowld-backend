@@ -70,4 +70,15 @@ const userNameUpdate = async (req: Request, res: Response, next: NextFunction) =
         res.status(500).json({ message: "Internal server error" });
     }
 };
-export { getUsers, userRegister, userSignin, userNameUpdate };
+
+const userDelete = async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    try {
+        await userModel.findByIdAndRemove({ _id: id });
+        res.status(200).json({ message: "User deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+export { getUsers, userRegister, userSignin, userNameUpdate, userDelete };
