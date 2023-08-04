@@ -56,12 +56,15 @@ describe("User", () => {
     test("should return 200 after email", async () => {
         const userId = JSON.stringify(jwt.verify(token, process.env.JWT_SECRET as string));
         const update = { email: "miyamoto.musashi@mail.com" };
+        simpleSignin.email = update.email;
         const response = await request(app)
             .patch(`${path}/${JSON.parse(userId)._id}/email`)
             .send(update)
             .set("Authorization", `Bearer ${token}`)
             .set("Accept", "application/json")
             .set("Content-Type", "application/json");
+        const res = await request(app).post("/api/v1/user/signin").send(simpleSignin).set("Accept", "application/json").set("Content-Type", "application/json");
+        token = res.body.token;
         const user = await request(app)
             .get(`${path}/${JSON.parse(userId)._id}`)
             .set("Authorization", `Bearer ${token}`);

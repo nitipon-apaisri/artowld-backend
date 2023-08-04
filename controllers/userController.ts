@@ -88,7 +88,7 @@ const updateUserName = async (req: Request, res: Response, next: NextFunction) =
         await userModel.findByIdAndUpdate({ _id: id }, user, { new: true });
         res.status(200).json({ message: "User updated successfully" });
     } catch (error) {
-        throw new Error(error as string);
+        res.status(500).json({ message: "Internal server error" });
     }
     next();
 };
@@ -101,7 +101,7 @@ const updateUserEmail = async (req: Request, res: Response, next: NextFunction) 
         await userModel.findByIdAndUpdate({ _id: id }, user, { new: true });
         res.status(200).json({ message: "User email updated successfully" });
     } catch (error) {
-        throw new Error(error as string);
+        res.status(500).json({ message: "Internal server error" });
     }
     next();
 };
@@ -112,7 +112,7 @@ const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
         await userModel.findByIdAndRemove({ _id: id });
         res.status(200).json({ message: "User deleted successfully" });
     } catch (error) {
-        throw new Error(error as string);
+        res.status(500).json({ message: "Internal server error" });
     }
     next();
 };
