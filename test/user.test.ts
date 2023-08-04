@@ -53,6 +53,22 @@ describe("User", () => {
         expect(user.body.name.first !== simpleUser.name.first).toBe(true);
     });
 
+    test("should return 200 after email", async () => {
+        const userId = JSON.stringify(jwt.verify(token, process.env.JWT_SECRET as string));
+        const update = { email: "miyamoto.musashi@mail.com" };
+        const response = await request(app)
+            .patch(`${path}/${JSON.parse(userId)._id}/email`)
+            .send(update)
+            .set("Authorization", `Bearer ${token}`)
+            .set("Accept", "application/json")
+            .set("Content-Type", "application/json");
+        const user = await request(app)
+            .get(`${path}/${JSON.parse(userId)._id}`)
+            .set("Authorization", `Bearer ${token}`);
+        expect(response.status).toBe(200);
+        expect(user.body.email !== simpleUser.email).toBe(true);
+    });
+
     test("should return 200 after delete user", async () => {
         const userId = JSON.stringify(jwt.verify(token, process.env.JWT_SECRET as string));
         const response = await request(app)

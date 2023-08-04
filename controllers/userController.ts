@@ -27,9 +27,10 @@ const getUser = async (req: Request, res: Response, next: NextFunction) => {
     } catch (error) {
         throw new Error(error as string);
     }
+    next();
 };
 
-const userRegister = async (req: Request, res: Response, next: NextFunction) => {
+const registerUser = async (req: Request, res: Response, next: NextFunction) => {
     const { name, email, password, role } = req.body;
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -52,10 +53,11 @@ const userRegister = async (req: Request, res: Response, next: NextFunction) => 
         } catch (error) {
             throw new Error(error as string);
         }
+        next();
     }
 };
 
-const userSignin = async (req: Request, res: Response, next: NextFunction) => {
+const signIn = async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = req.body;
     const findUser = await userModel.findOne({ email: email });
     if (!findUser) {
@@ -72,10 +74,11 @@ const userSignin = async (req: Request, res: Response, next: NextFunction) => {
         } catch (error) {
             throw new Error(error as string);
         }
+        next();
     }
 };
 
-const userNameUpdate = async (req: Request, res: Response, next: NextFunction) => {
+const updateUserName = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     const { name } = req.body;
     const user = {
@@ -87,9 +90,23 @@ const userNameUpdate = async (req: Request, res: Response, next: NextFunction) =
     } catch (error) {
         throw new Error(error as string);
     }
+    next();
 };
 
-const userDelete = async (req: Request, res: Response, next: NextFunction) => {
+const updateUserEmail = async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    const { email } = req.body;
+    const user = { email: email };
+    try {
+        await userModel.findByIdAndUpdate({ _id: id }, user, { new: true });
+        res.status(200).json({ message: "User email updated successfully" });
+    } catch (error) {
+        throw new Error(error as string);
+    }
+    next();
+};
+
+const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     try {
         await userModel.findByIdAndRemove({ _id: id });
@@ -97,6 +114,7 @@ const userDelete = async (req: Request, res: Response, next: NextFunction) => {
     } catch (error) {
         throw new Error(error as string);
     }
+    next();
 };
 
-export { getUsers, getUser, userRegister, userSignin, userNameUpdate, userDelete };
+export { getUsers, getUser, registerUser, signIn, updateUserName, updateUserEmail, deleteUser };
