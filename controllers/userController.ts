@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import e, { NextFunction, Request, Response } from "express";
 import bcrypt from "bcrypt";
 import isUserDuplicate from "../utils/isUserDuplicate";
 import userModel from "../models/userModel";
@@ -11,7 +11,8 @@ const getUsers = async (req: Request, res: Response, next: NextFunction) => {
         const users = await userModel.find();
         res.status(200).json(users);
     } catch (error) {
-        res.status(500).json({ message: "Internal server error" });
+        const err = error as Error;
+        res.status(500).json({ message: err.message });
     }
 };
 
@@ -25,7 +26,8 @@ const getUser = async (req: Request, res: Response, next: NextFunction) => {
             res.status(404).json({ message: "User not found" });
         }
     } catch (error) {
-        throw new Error(error as string);
+        const err = error as Error;
+        res.status(500).json({ message: err.message });
     }
     next();
 };
@@ -51,7 +53,8 @@ const registerUser = async (req: Request, res: Response, next: NextFunction) => 
             await newUser.save();
             res.status(200).json({ message: "User registered successfully" });
         } catch (error) {
-            throw new Error(error as string);
+            const err = error as Error;
+            res.status(500).json({ message: err.message });
         }
         next();
     }
@@ -67,12 +70,13 @@ const signIn = async (req: Request, res: Response, next: NextFunction) => {
             const isPasswordMatch = await bcrypt.compare(password, findUser.password);
             const token = { _id: findUser?._id, email: findUser?.email };
             if (!isPasswordMatch) {
-                res.status(403).json({ message: "Invalid credentials" });
+                res.status(403).json({ message: "Something went wrong" });
             } else {
                 res.status(200).json({ message: "Login success", token: jwt.sign(token, process.env.JWT_SECRET as string) });
             }
         } catch (error) {
-            throw new Error(error as string);
+            const err = error as Error;
+            res.status(500).json({ message: err.message });
         }
         next();
     }
@@ -88,7 +92,8 @@ const updateUserName = async (req: Request, res: Response, next: NextFunction) =
         await userModel.findByIdAndUpdate({ _id: id }, user, { new: true });
         res.status(200).json({ message: "User updated successfully" });
     } catch (error) {
-        res.status(500).json({ message: "Internal server error" });
+        const err = error as Error;
+        res.status(500).json({ message: err.message });
     }
     next();
 };
@@ -101,9 +106,39 @@ const updateUserEmail = async (req: Request, res: Response, next: NextFunction) 
         await userModel.findByIdAndUpdate({ _id: id }, user, { new: true });
         res.status(200).json({ message: "User email updated successfully" });
     } catch (error) {
-        res.status(500).json({ message: "Internal server error" });
+        const err = error as Error;
+        res.status(500).json({ message: err.message });
     }
     next();
+};
+
+const updateUserPassword = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { password } = req.body;
+        const { id } = req.params;
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+        await userModel.findById({ _id: id }).then((user) => {
+            user!.password = hashedPassword;
+            user!.save();
+        });
+        res.status(200).json({ message: "Password updated successfully" });
+    } catch (error) {
+        const err = error as Error;
+        console.log(err.message);
+        res.status(500).json({ message: err.message });
+    }
+};
+
+const createResetPasswordLink = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { email } = req.body;
+        const userId = await userModel.findOne({ email: email });
+        const token = jwt.sign({ id: userId?._id }, process.env.JWT_SECRET as string, { expiresIn: "15m" });
+        res.status(200).json({ link: `http://localhost:${process.env.PORT || 1997}/api/v1/user/${userId?._id}/reset-password/${token}` }); //Also send the link to the user's email
+    } catch (error) {
+        throw new Error(error as string);
+    }
 };
 
 const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
@@ -112,9 +147,10 @@ const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
         await userModel.findByIdAndRemove({ _id: id });
         res.status(200).json({ message: "User deleted successfully" });
     } catch (error) {
-        res.status(500).json({ message: "Internal server error" });
+        const err = error as Error;
+        res.status(500).json({ message: err.message });
     }
     next();
 };
 
-export { getUsers, getUser, registerUser, signIn, updateUserName, updateUserEmail, deleteUser };
+export { getUsers, getUser, registerUser, signIn, updateUserName, updateUserEmail, updateUserPassword, createResetPasswordLink, deleteUser };

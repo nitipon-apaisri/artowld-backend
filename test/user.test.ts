@@ -8,6 +8,7 @@ import { simpleSignin, simpleUser } from "../database/simpleData";
 import jwt from "jsonwebtoken";
 let token: string;
 const path = "/api/v1/user";
+const update = { email: "miyamoto.musashi@mail.com" };
 beforeAll(async () => {
     const mongoServer = await MongoMemoryServer.create();
     await mongoose.connect(mongoServer.getUri(), { dbName: "testDB" });
@@ -55,7 +56,6 @@ describe("User", () => {
 
     test("should return 200 after email", async () => {
         const userId = JSON.stringify(jwt.verify(token, process.env.JWT_SECRET as string));
-        const update = { email: "miyamoto.musashi@mail.com" };
         simpleSignin.email = update.email;
         const response = await request(app)
             .patch(`${path}/${JSON.parse(userId)._id}/email`)
@@ -72,6 +72,16 @@ describe("User", () => {
         expect(user.body.email !== simpleUser.email).toBe(true);
     });
 
+    test("should return 200 after changed password", async () => {
+        const userId = JSON.stringify(jwt.verify(token, process.env.JWT_SECRET as string));
+        await request(app)
+            .patch(`/api/v1/user/${JSON.parse(userId)._id}/changePassword`)
+            .send({ password: "123" })
+            .set("Authorization", `Bearer ${token}`);
+        const res = await request(app).post("/api/v1/user/signin").send(simpleSignin).set("Accept", "application/json").set("Content-Type", "application/json");
+        expect(res.status).toBe(403);
+    });
+
     test("should return 200 after delete user", async () => {
         const userId = JSON.stringify(jwt.verify(token, process.env.JWT_SECRET as string));
         const response = await request(app)
@@ -80,5 +90,13 @@ describe("User", () => {
             .set("Accept", "application/json")
             .set("Content-Type", "application/json");
         expect(response.status).toBe(200);
+    });
+});
+
+describe("Reset password", () => {
+    test("should return reset password link", async () => {
+        const res = await request(app).post("/api/v1/get-reset-password-link").send(update).set("Accept", "application/json").set("Content-Type", "application/json");
+        expect(res.status).toBe(200);
+        expect(JSON.parse(res.text)).toHaveProperty("link");
     });
 });
