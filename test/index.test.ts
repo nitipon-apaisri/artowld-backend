@@ -7,6 +7,7 @@ import mongoose from "mongoose";
 import { simpleSignin, simpleUser } from "../database/simpleData";
 import jwt from "jsonwebtoken";
 let token: string;
+
 beforeAll(async () => {
     const mongoServer = await MongoMemoryServer.create();
     await mongoose.connect(mongoServer.getUri(), { dbName: "testDB" });
@@ -28,6 +29,11 @@ describe("Hello World", () => {
 describe("User", () => {
     test("should return users", async () => {
         const response = await request(app).get("/api/v1/users").set("Authorization", `Bearer ${token}`);
+        expect(response.status).toBe(200);
+    });
+    test("should return a user", async () => {
+        const userId = JSON.stringify(jwt.verify(token, process.env.JWT_SECRET as string));
+        const response = await request(app).get(`/api/v1/user/${userId}`).set("Authorization", `Bearer ${token}`);
         expect(response.status).toBe(200);
     });
     test("should return 200 after update user", async () => {
