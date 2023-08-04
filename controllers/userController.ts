@@ -5,6 +5,16 @@ import userModel from "../models/userModel";
 import { v4 as uuidv4 } from "uuid";
 import { userType } from "../types/userTypes";
 import jwt from "jsonwebtoken";
+
+const getUsers = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const users = await userModel.find();
+        res.status(200).json(users);
+    } catch (error) {
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+
 const userRegister = async (req: Request, res: Response, next: NextFunction) => {
     const { name, email, password, role } = req.body;
     const salt = await bcrypt.genSalt(10);
@@ -60,4 +70,4 @@ const userNameUpdate = async (req: Request, res: Response, next: NextFunction) =
         res.status(500).json({ message: "Internal server error" });
     }
 };
-export { userRegister, userSignin, userNameUpdate };
+export { getUsers, userRegister, userSignin, userNameUpdate };
