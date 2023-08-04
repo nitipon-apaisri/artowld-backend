@@ -1,5 +1,7 @@
+import { userType } from "../types/userTypes";
+
 const simpleUser: userType = {
-    id: "1",
+    _id: "1",
     name: { first: "John", last: "Doe" },
     email: "john.doe@mail.com",
     password: "123456",
