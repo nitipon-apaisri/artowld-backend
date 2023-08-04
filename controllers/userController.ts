@@ -47,4 +47,17 @@ const userSignin = async (req: Request, res: Response, next: NextFunction) => {
     }
 };
 
-export { userRegister, userSignin };
+const userNameUpdate = async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    const { name } = req.body;
+    const user = {
+        name: name,
+    };
+    try {
+        await userModel.findByIdAndUpdate({ _id: id }, user, { new: true });
+        res.status(200).json({ message: "User updated successfully" });
+    } catch (error) {
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+export { userRegister, userSignin, userNameUpdate };

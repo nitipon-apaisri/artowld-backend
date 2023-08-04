@@ -11,6 +11,6 @@ const user = {
     password: String,
     role: String,
 };
-const userSchema = new Schema(user);
+const userSchema = new Schema(user, { timestamps: true });
 const userModel = mongoose.model<userType>("users", userSchema);
 export default userModel;
