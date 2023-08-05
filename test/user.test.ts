@@ -7,6 +7,7 @@ import mongoose from "mongoose";
 import { simpleSignin, simpleUser } from "../database/simpleData";
 import jwt from "jsonwebtoken";
 let token: string;
+let resetPasswordLink = "";
 const path = "/api/v1/user";
 const update = { email: "miyamoto.musashi@mail.com" };
 beforeAll(async () => {
@@ -82,6 +83,20 @@ describe("User", () => {
         expect(res.status).toBe(403);
     });
 
+    test("should return reset password link", async () => {
+        const res = await request(app).post("/api/v1/get-reset-password-link").send(update).set("Accept", "application/json").set("Content-Type", "application/json");
+        resetPasswordLink = res.body.link.replace(`http://localhost:${process.env.PORT || 1997}`, "");
+        expect(res.status).toBe(200);
+        expect(JSON.parse(res.text)).toHaveProperty("link");
+    });
+
+    test("should return 200 after reset password", async () => {
+        const resetRes = await request(app).post(resetPasswordLink).send({ password: "111" }).set("Accept", "application/json").set("Content-Type", "application/json");
+        expect(resetRes.status).toBe(200);
+        const signInRes = await request(app).post("/api/v1/user/signin").send(simpleSignin).set("Accept", "application/json").set("Content-Type", "application/json");
+        expect(signInRes.status).toBe(403);
+    });
+
     test("should return 200 after delete user", async () => {
         const userId = JSON.stringify(jwt.verify(token, process.env.JWT_SECRET as string));
         const response = await request(app)
@@ -90,13 +105,5 @@ describe("User", () => {
             .set("Accept", "application/json")
             .set("Content-Type", "application/json");
         expect(response.status).toBe(200);
-    });
-});
-
-describe("Reset password", () => {
-    test("should return reset password link", async () => {
-        const res = await request(app).post("/api/v1/get-reset-password-link").send(update).set("Accept", "application/json").set("Content-Type", "application/json");
-        expect(res.status).toBe(200);
-        expect(JSON.parse(res.text)).toHaveProperty("link");
     });
 });

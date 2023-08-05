@@ -1,4 +1,4 @@
-import e, { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import bcrypt from "bcrypt";
 import isUserDuplicate from "../utils/isUserDuplicate";
 import userModel from "../models/userModel";
@@ -130,6 +130,28 @@ const updateUserPassword = async (req: Request, res: Response, next: NextFunctio
     }
 };
 
+const resetPassword = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { id, token } = req.params;
+        const { password } = req.body;
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET as string);
+        if (decodedToken) {
+            await userModel.findById({ _id: id }).then((user) => {
+                user!.password = hashedPassword;
+                user!.save();
+            });
+            res.status(200).json({ message: "Password reset successfully" });
+        } else {
+            res.status(403).json({ message: "Something went wrong" });
+        }
+    } catch (error) {
+        const err = error as Error;
+        res.status(500).json({ message: err.message });
+    }
+};
+
 const createResetPasswordLink = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { email } = req.body;
@@ -153,4 +175,4 @@ const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
     next();
 };
 
-export { getUsers, getUser, registerUser, signIn, updateUserName, updateUserEmail, updateUserPassword, createResetPasswordLink, deleteUser };
+export { getUsers, getUser, registerUser, signIn, updateUserName, updateUserEmail, updateUserPassword, createResetPasswordLink, resetPassword, deleteUser };

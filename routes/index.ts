@@ -12,5 +12,6 @@ router.patch("/user/:id", auth, userController.updateUserName);
 router.patch("/user/:id/email", auth, userController.updateUserEmail);
 router.patch("/user/:id/changePassword", auth, userController.updateUserPassword);
 router.post("/get-reset-password-link", userController.createResetPasswordLink);
+router.post("/user/:id/reset-password/:token", userController.resetPassword);
 router.delete("/user/:id", auth, userController.deleteUser);
 export default router;
