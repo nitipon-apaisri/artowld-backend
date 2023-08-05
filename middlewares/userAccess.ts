@@ -15,4 +15,19 @@ const isAdmin = async (req: Request, res: Response, next: NextFunction) => {
     }
 };
 
-export default isAdmin;
+const validateUser = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { id } = req.params;
+        const user = await req.user;
+        if (id === user._id) {
+            next();
+        } else {
+            res.status(401).json({ message: "Unauthorized" });
+        }
+    } catch (error) {
+        const err = error as Error;
+        res.status(500).json({ message: err.message });
+    }
+};
+
+export { isAdmin, validateUser };

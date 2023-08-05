@@ -97,6 +97,11 @@ describe("User", () => {
         expect(signInRes.status).toBe(403);
     });
 
+    test("should return 401 if user is invalid", async () => {
+        const response = await request(app).patch(`${path}/123`).send(update).set("Authorization", `Bearer ${token}`).set("Accept", "application/json").set("Content-Type", "application/json");
+        expect(response.status).toBe(401);
+    });
+
     test("should return 200 after delete user", async () => {
         const userId = JSON.stringify(jwt.verify(token, process.env.JWT_SECRET as string));
         const response = await request(app)
