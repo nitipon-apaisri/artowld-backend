@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import bcrypt from "bcrypt";
+import { v4 as uuidv4 } from "uuid";
+import jwt from "jsonwebtoken";
+import { userType } from "../types/userTypes";
 import isUserDuplicate from "../utils/isUserDuplicate";
 import userModel from "../models/userModel";
-import { v4 as uuidv4 } from "uuid";
-import { userType } from "../types/userTypes";
-import jwt from "jsonwebtoken";
 
 const getUsers = async (req: Request, res: Response, next: NextFunction) => {
     try {

@@ -1,6 +1,6 @@
 import { Router } from "express";
-
 import * as userController from "../controllers/userController";
+import * as productController from "../controllers/productController";
 import { auth } from "../middlewares/auth";
 import { validateUser } from "../middlewares/userAccess";
 const router = Router();
@@ -14,5 +14,6 @@ router.patch("/user/:id/email", auth, validateUser, userController.updateUserEma
 router.patch("/user/:id/changePassword", auth, validateUser, userController.updateUserPassword);
 router.post("/get-reset-password-link", userController.createResetPasswordLink);
 router.post("/user/:id/reset-password/:token", userController.resetPassword);
+router.post("/product", auth, productController.registerProduct);
 router.delete("/user/:id", auth, validateUser, userController.deleteUser);
 export default router;
