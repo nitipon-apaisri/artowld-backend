@@ -1,11 +1,13 @@
 import { Router } from "express";
 import * as userController from "../controllers/userController";
 import * as productController from "../controllers/productController";
+import * as imageController from "../controllers/imageController";
 import { auth } from "../middlewares/auth";
 import { validateUser } from "../middlewares/userAccess";
 import multer from "multer";
 
 const router = Router();
+// Multer config
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, "uploads/");
@@ -15,6 +17,9 @@ const storage = multer.diskStorage({
     },
 });
 const upload = multer({ storage: storage });
+
+// Routes
+//User routes
 router.get("/users", auth, userController.getUsers);
 router.get("/user/:id", auth, userController.getUser);
 router.post("/user/signup", userController.registerUser);
@@ -24,8 +29,12 @@ router.patch("/user/:id/email", auth, validateUser, userController.updateUserEma
 router.patch("/user/:id/changePassword", auth, validateUser, userController.updateUserPassword);
 router.post("/get-reset-password-link", userController.createResetPasswordLink);
 router.post("/user/:id/reset-password/:token", userController.resetPassword);
+
+//Product routes
 router.post("/product", auth, productController.registerProduct);
-router.post("/image", upload.single("image"), productController.uploadFile);
-router.get("/image/:id", productController.retrieveImg);
 router.delete("/user/:id", auth, validateUser, userController.deleteUser);
+
+//Image routes
+router.post("/image", upload.single("image"), imageController.uploadFile);
+router.get("/image/:id", imageController.retrieveImg);
 export default router;

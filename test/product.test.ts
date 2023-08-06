@@ -5,7 +5,7 @@ import { beforeAll, afterAll } from "@jest/globals";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
 import { simpleSignin, simpleUser, sampleProducts } from "../database/simpleData";
-import fs from "fs";
+
 const path = "/api/v1/product";
 let token: string;
 beforeAll(async () => {
