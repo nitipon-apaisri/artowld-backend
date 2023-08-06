@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import { productType } from "../types/productTypes";
 import productModel from "../models/productModel";
 import path from "path";
-import { readFileSync } from "fs";
+import * as fs from "fs";
 import imageModel from "../models/imageModel";
 
 const registerProduct = async (req: Request, res: Response, next: NextFunction) => {
@@ -32,10 +32,9 @@ const registerProduct = async (req: Request, res: Response, next: NextFunction) 
     next();
 };
 
-const getImg = async (req: Request, res: Response, next: NextFunction) => {
+const uploadFile = async (req: Request, res: Response, next: NextFunction) => {
     const file = req.file;
-    console.log(file);
-    const readFile = readFileSync(path.join("./uploads/" + file?.filename));
+    const readFile = fs.readFileSync(path.join("./uploads/" + file?.filename));
     const imgObj = {
         _id: uuidv4(),
         name: file?.filename,
@@ -44,6 +43,9 @@ const getImg = async (req: Request, res: Response, next: NextFunction) => {
     };
     try {
         await imageModel.create(imgObj);
+        setTimeout(() => {
+            fs.unlinkSync(path.join("./uploads/" + file?.filename));
+        }, 1000);
         res.status(200).json({ message: "Image uploaded successfully" });
     } catch (error) {
         const err = error as Error;
@@ -55,23 +57,14 @@ const retrieveImg = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     try {
         await imageModel.findById(id).then((img: any) => {
-            const buffer = Buffer.from(img?.data).toString("base64");
-            console.log(buffer);
-            res.send(`
-            <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-<img src="data:${img?.contentType};base64,${buffer}" alt="img"/>
-    
-</body>
-</html>
-            
-            `);
+            const buffer = Buffer.from(img?.data, "base64");
+            res.writeHead(200, { "Content-Type": img?.contentType, "Content-Length": img?.data.length });
+            res.end(buffer);
+            // res.set("Content-Type", "text/html");
+            // res.send(`<img src="https://pbs.twimg.com/media/F21OcvXbIAAc6JQ?format=jpg&name=small"/>`);
+            // res.send(`
+            // <img src="data:${img?.contentType};base64,${buffer}" alt="img"/>
+            // `);
         });
     } catch (error) {
         const err = error as Error;
@@ -79,4 +72,4 @@ const retrieveImg = async (req: Request, res: Response, next: NextFunction) => {
     }
 };
 
-export { registerProduct, getImg, retrieveImg };
+export { registerProduct, uploadFile, retrieveImg };

@@ -25,7 +25,7 @@ router.patch("/user/:id/changePassword", auth, validateUser, userController.upda
 router.post("/get-reset-password-link", userController.createResetPasswordLink);
 router.post("/user/:id/reset-password/:token", userController.resetPassword);
 router.post("/product", auth, productController.registerProduct);
-router.post("/image", upload.single("image"), productController.getImg);
+router.post("/image", upload.single("image"), productController.retrieveImg);
 router.get("/image/:id", productController.retrieveImg);
 router.delete("/user/:id", auth, validateUser, userController.deleteUser);
 export default router;
