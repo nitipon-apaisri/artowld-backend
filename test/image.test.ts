@@ -36,8 +36,7 @@ describe("Image", () => {
         expect(response.body).toHaveProperty("link");
     });
     test("should return 200 after retrieve a image", async () => {
-        console.log(link);
-        const response = await request(app).get(`${link}`);
+        const response = await request(app).get(`${link}`).set("Authorization", `Bearer ${token}`);
         expect(response.status).toBe(200);
     });
 });

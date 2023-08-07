@@ -33,8 +33,10 @@ router.post("/user/:id/reset-password/:token", userController.resetPassword);
 //Product routes
 router.post("/product", auth, productController.registerProduct);
 router.delete("/user/:id", auth, validateUser, userController.deleteUser);
+router.get("/products", productController.getProducts);
+router.get("/product/:id", productController.getProduct);
 
 //Image routes
-router.post("/image", upload.single("image"), imageController.uploadFile);
+router.post("/image", auth, upload.single("image"), imageController.uploadFile);
 router.get("/image/:id", imageController.retrieveImg);
 export default router;

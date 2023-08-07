@@ -27,4 +27,25 @@ const registerProduct = async (req: Request, res: Response, next: NextFunction) 
     next();
 };
 
-export { registerProduct };
+const getProducts = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const products = await productModel.find({});
+        res.status(200).json({ products: products });
+    } catch (error) {
+        const err = error as Error;
+        res.status(500).json({ message: err.message });
+    }
+};
+
+const getProduct = async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    try {
+        const product = await productModel.findById({ _id: id });
+        res.status(200).json({ product: product });
+    } catch (error) {
+        const err = error as Error;
+        res.status(500).json({ message: err.message });
+    }
+};
+
+export { registerProduct, getProducts, getProduct };

@@ -24,4 +24,16 @@ describe("Product", () => {
         const response = await request(app).post(`${path}`).send(sampleProducts).set("Authorization", `Bearer ${token}`).set("Accept", "application/json").set("Content-Type", "application/json");
         expect(response.status).toBe(200);
     });
+    test("should return 200 after get all products", async () => {
+        const response = await request(app).get(`/api/v1/products`).set("Authorization", `Bearer ${token}`).set("Accept", "application/json").set("Content-Type", "application/json");
+        expect(response.status).toBe(200);
+    });
+    test("should return 200 after get a product", async () => {
+        const response = await request(app)
+            .get(`/api/v1/product/${sampleProducts._id}`)
+            .set("Authorization", `Bearer ${token}`)
+            .set("Accept", "application/json")
+            .set("Content-Type", "application/json");
+        expect(response.status).toBe(200);
+    });
 });
