@@ -17,8 +17,8 @@ const getUsers = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 const getUser = async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
-    const user = await userModel.findById(id);
+    const { userId } = req.params;
+    const user = await userModel.findById(userId);
     try {
         if (user) {
             res.status(200).json(user);
@@ -83,13 +83,13 @@ const signIn = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 const updateUserName = async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
+    const { userId } = req.params;
     const { name } = req.body;
     const user = {
         name: name,
     };
     try {
-        await userModel.findByIdAndUpdate({ _id: id }, user, { new: true });
+        await userModel.findByIdAndUpdate({ _id: userId }, user, { new: true });
         res.status(200).json({ message: "User updated successfully" });
     } catch (error) {
         const err = error as Error;
@@ -99,11 +99,11 @@ const updateUserName = async (req: Request, res: Response, next: NextFunction) =
 };
 
 const updateUserEmail = async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
+    const { userId } = req.params;
     const { email } = req.body;
     const user = { email: email };
     try {
-        await userModel.findByIdAndUpdate({ _id: id }, user, { new: true });
+        await userModel.findByIdAndUpdate({ _id: userId }, user, { new: true });
         res.status(200).json({ message: "User email updated successfully" });
     } catch (error) {
         const err = error as Error;
@@ -115,30 +115,30 @@ const updateUserEmail = async (req: Request, res: Response, next: NextFunction) 
 const updateUserPassword = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { password } = req.body;
-        const { id } = req.params;
+        const { userId } = req.params;
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
-        await userModel.findById({ _id: id }).then((user) => {
+        await userModel.findById({ _id: userId }).then((user) => {
             user!.password = hashedPassword;
             user!.save();
         });
         res.status(200).json({ message: "Password updated successfully" });
     } catch (error) {
         const err = error as Error;
-        console.log(err.message);
+
         res.status(500).json({ message: err.message });
     }
 };
 
 const resetPassword = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { id, token } = req.params;
+        const { userId, token } = req.params;
         const { password } = req.body;
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
         const decodedToken = jwt.verify(token, process.env.JWT_SECRET as string);
         if (decodedToken) {
-            await userModel.findById({ _id: id }).then((user) => {
+            await userModel.findById({ _id: userId }).then((user) => {
                 user!.password = hashedPassword;
                 user!.save();
             });
@@ -164,9 +164,9 @@ const createResetPasswordLink = async (req: Request, res: Response, next: NextFu
 };
 
 const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
+    const { userId } = req.params;
     try {
-        await userModel.findByIdAndRemove({ _id: id });
+        await userModel.findByIdAndRemove({ _id: userId });
         res.status(200).json({ message: "User deleted successfully" });
     } catch (error) {
         const err = error as Error;

@@ -17,9 +17,9 @@ const isAdmin = async (req: Request, res: Response, next: NextFunction) => {
 
 const validateUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { id } = req.params;
+        const { userId } = req.params;
         const user = await req.user;
-        if (id === user._id) {
+        if (userId === user._id) {
             next();
         } else {
             res.status(401).json({ message: "Unauthorized" });

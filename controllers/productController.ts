@@ -4,6 +4,7 @@ import { productType } from "../types/productTypes";
 import productModel from "../models/productModel";
 
 const registerProduct = async (req: Request, res: Response, next: NextFunction) => {
+    const { userId } = req.params;
     const { name, description, price, category, image } = req.body;
     const product: productType = new productModel({
         _id: uuidv4(),
@@ -12,6 +13,7 @@ const registerProduct = async (req: Request, res: Response, next: NextFunction) 
         price,
         category,
         image,
+        owner: userId,
         createdAt: new Date(),
         updatedAt: new Date(),
     });
@@ -48,4 +50,27 @@ const getProduct = async (req: Request, res: Response, next: NextFunction) => {
     }
 };
 
-export { registerProduct, getProducts, getProduct };
+const updateProduct = async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+
+    const { name, description, price, category, image } = req.body;
+    try {
+        await productModel.findByIdAndUpdate(
+            { _id: id },
+            {
+                name,
+                description,
+                price,
+                category,
+                image,
+            },
+            { new: true }
+        );
+        res.status(200).json({ message: "Product updated successfully" });
+    } catch (error) {
+        const err = error as Error;
+        res.status(500).json({ message: err.message });
+    }
+};
+
+export { registerProduct, getProducts, getProduct, updateProduct };
