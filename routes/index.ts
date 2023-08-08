@@ -37,6 +37,7 @@ router.post("/user/:userId/product", auth, productController.registerProduct);
 router.get("/products", productController.getProducts);
 router.get("/product/:id", productController.getProduct);
 router.patch("/user/:userId/product/:id", auth, validateUser, productController.updateProduct);
+router.delete("/user/:userId/product/:id", auth, validateUser, productController.deleteProduct);
 
 //Image routes
 router.post("/user/:userId/image", auth, validateUser, upload.single("image"), imageController.uploadFile);

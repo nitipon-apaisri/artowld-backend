@@ -73,4 +73,15 @@ const updateProduct = async (req: Request, res: Response, next: NextFunction) =>
     }
 };
 
-export { registerProduct, getProducts, getProduct, updateProduct };
+const deleteProduct = async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    try {
+        await productModel.findByIdAndDelete({ _id: id });
+        res.status(200).json({ message: "Product deleted successfully" });
+    } catch (error) {
+        const err = error as Error;
+        res.status(500).json({ message: err.message });
+    }
+};
+
+export { registerProduct, getProducts, getProduct, updateProduct, deleteProduct };

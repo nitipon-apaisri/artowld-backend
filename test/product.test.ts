@@ -52,4 +52,12 @@ describe("Product", () => {
             .set("Content-Type", "application/json");
         expect(response.status).toBe(200);
     });
+    test("should return 200 after delete a product", async () => {
+        const response = await request(app)
+            .delete(`/api/v1/user/${userId}/product/${productId}`)
+            .set("Authorization", `Bearer ${token}`)
+            .set("Accept", "application/json")
+            .set("Content-Type", "application/json");
+        expect(response.status).toBe(200);
+    });
 });
