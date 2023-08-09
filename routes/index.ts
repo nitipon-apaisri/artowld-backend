@@ -35,7 +35,7 @@ router.delete("/user/:userId", auth, validateUser, userController.deleteUser);
 //Product routes
 router.get("/products", productController.getProducts);
 router.get("/product/:id", productController.getProduct);
-router.post("/user/:userId/product", auth, productController.registerProduct);
+router.post("/user/:userId/product", auth, validateUser, productController.registerProduct);
 router.patch("/user/:userId/product/:id", auth, validateUser, productController.updateProduct);
 router.delete("/user/:userId/product/:id", auth, validateUser, productController.deleteProduct);
 
