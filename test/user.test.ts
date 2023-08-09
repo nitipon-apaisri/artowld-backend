@@ -24,20 +24,15 @@ afterAll(async () => {
 
 describe("User", () => {
     test("should return users", async () => {
-        const response = await request(app).get("/api/v1/users").set("Authorization", `Bearer ${token}`);
+        const response = await request(app).get("/api/v1/users");
         expect(response.status).toBe(200);
     });
 
     test("should return a user", async () => {
         userId = JSON.stringify(jwt.verify(token, process.env.JWT_SECRET as string));
-        const response = await request(app)
-            .get(`${path}/${JSON.parse(userId)._id}`)
-            .set("Authorization", `Bearer ${token}`);
-        const user = await request(app)
-            .get(`${path}/${JSON.parse(userId)._id}`)
-            .set("Authorization", `Bearer ${token}`);
+        const response = await request(app).get(`${path}/${JSON.parse(userId)._id}`);
         expect(response.status).toBe(200);
-        expect(user.body.name.first).toBe(simpleUser.name.first);
+        expect(response.body.name.first).toBe(simpleUser.name.first);
     });
 
     test("should return 200 after update user", async () => {

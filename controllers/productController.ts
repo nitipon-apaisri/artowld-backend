@@ -52,7 +52,6 @@ const getProduct = async (req: Request, res: Response, next: NextFunction) => {
 
 const updateProduct = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
-
     const { name, description, price, category, image } = req.body;
     try {
         await productModel.findByIdAndUpdate(

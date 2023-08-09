@@ -21,8 +21,8 @@ const upload = multer({ storage: storage });
 
 // Routes
 //User routes
-router.get("/users", auth, userController.getUsers);
-router.get("/user/:userId", auth, userController.getUser);
+router.get("/users", userController.getUsers);
+router.get("/user/:userId", userController.getUser);
 router.post("/user/signup", userController.registerUser);
 router.post("/user/signin", userController.signIn);
 router.patch("/user/:userId", auth, validateUser, userController.updateUserName);
@@ -33,9 +33,9 @@ router.post("/user/:userId/reset-password/:token", userController.resetPassword)
 router.delete("/user/:userId", auth, validateUser, userController.deleteUser);
 
 //Product routes
-router.post("/user/:userId/product", auth, productController.registerProduct);
 router.get("/products", productController.getProducts);
 router.get("/product/:id", productController.getProduct);
+router.post("/user/:userId/product", auth, productController.registerProduct);
 router.patch("/user/:userId/product/:id", auth, validateUser, productController.updateProduct);
 router.delete("/user/:userId/product/:id", auth, validateUser, productController.deleteProduct);
 
