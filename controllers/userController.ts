@@ -118,10 +118,7 @@ const updateUserPassword = async (req: Request, res: Response, next: NextFunctio
         const { userId } = req.params;
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
-        await userModel.findById({ _id: userId }).then((user) => {
-            user!.password = hashedPassword;
-            user!.save();
-        });
+        await userModel.findByIdAndUpdate({ _id: userId }, { password: hashedPassword }, { new: true });
         res.status(200).json({ message: "Password updated successfully" });
     } catch (error) {
         const err = error as Error;
@@ -138,10 +135,7 @@ const resetPassword = async (req: Request, res: Response, next: NextFunction) =>
         const hashedPassword = await bcrypt.hash(password, salt);
         const decodedToken = jwt.verify(token, process.env.JWT_SECRET as string);
         if (decodedToken) {
-            await userModel.findById({ _id: userId }).then((user) => {
-                user!.password = hashedPassword;
-                user!.save();
-            });
+            await userModel.findById({ _id: userId }, { password: hashedPassword }, { new: true });
             res.status(200).json({ message: "Password reset successfully" });
         } else {
             res.status(403).json({ message: "Something went wrong" });

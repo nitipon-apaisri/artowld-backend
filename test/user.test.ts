@@ -10,6 +10,7 @@ let token: string;
 let resetPasswordLink = "";
 const path = "/api/v1/user";
 const update = { email: "miyamoto.musashi@mail.com" };
+let userId: string;
 beforeAll(async () => {
     const mongoServer = await MongoMemoryServer.create();
     await mongoose.connect(mongoServer.getUri(), { dbName: "testDB" });
@@ -28,7 +29,7 @@ describe("User", () => {
     });
 
     test("should return a user", async () => {
-        const userId = JSON.stringify(jwt.verify(token, process.env.JWT_SECRET as string));
+        userId = JSON.stringify(jwt.verify(token, process.env.JWT_SECRET as string));
         const response = await request(app)
             .get(`${path}/${JSON.parse(userId)._id}`)
             .set("Authorization", `Bearer ${token}`);
@@ -40,7 +41,6 @@ describe("User", () => {
     });
 
     test("should return 200 after update user", async () => {
-        const userId = JSON.stringify(jwt.verify(token, process.env.JWT_SECRET as string));
         const update = { name: { first: "Miyamoto", last: "Musashi" } };
         const response = await request(app)
             .patch(`${path}/${JSON.parse(userId)._id}`)
@@ -56,7 +56,6 @@ describe("User", () => {
     });
 
     test("should return 200 after email", async () => {
-        const userId = JSON.stringify(jwt.verify(token, process.env.JWT_SECRET as string));
         simpleSignin.email = update.email;
         const response = await request(app)
             .patch(`${path}/${JSON.parse(userId)._id}/email`)
@@ -74,7 +73,6 @@ describe("User", () => {
     });
 
     test("should return 200 after changed password", async () => {
-        const userId = JSON.stringify(jwt.verify(token, process.env.JWT_SECRET as string));
         await request(app)
             .patch(`/api/v1/user/${JSON.parse(userId)._id}/changePassword`)
             .send({ password: "123" })
@@ -103,7 +101,6 @@ describe("User", () => {
     });
 
     test("should return 200 after delete user", async () => {
-        const userId = JSON.stringify(jwt.verify(token, process.env.JWT_SECRET as string));
         const response = await request(app)
             .delete(`${path}/${JSON.parse(userId)._id}`)
             .set("Authorization", `Bearer ${token}`)
