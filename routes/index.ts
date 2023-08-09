@@ -25,7 +25,7 @@ router.get("/users", userController.getUsers);
 router.get("/user/:userId", userController.getUser);
 router.post("/user/signup", userController.registerUser);
 router.post("/user/signin", userController.signIn);
-router.patch("/user/:userId", auth, validateUser, userController.updateUserName);
+router.patch("/user/:userId/userName", auth, validateUser, userController.updateUserName);
 router.patch("/user/:userId/email", auth, validateUser, userController.updateUserEmail);
 router.patch("/user/:userId/changePassword", auth, validateUser, userController.updateUserPassword);
 router.post("/get-reset-password-link", userController.createResetPasswordLink);

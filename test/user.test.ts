@@ -35,10 +35,10 @@ describe("User", () => {
         expect(response.body.name.first).toBe(simpleUser.name.first);
     });
 
-    test("should return 200 after update user", async () => {
+    test("should return 200 after update user name", async () => {
         const update = { name: { first: "Miyamoto", last: "Musashi" } };
         const response = await request(app)
-            .patch(`${path}/${JSON.parse(userId)._id}`)
+            .patch(`${path}/${JSON.parse(userId)._id}/userName`)
             .send(update)
             .set("Authorization", `Bearer ${token}`)
             .set("Accept", "application/json")
@@ -91,7 +91,12 @@ describe("User", () => {
     });
 
     test("should return 401 if user is invalid", async () => {
-        const response = await request(app).patch(`${path}/123`).send(update).set("Authorization", `Bearer ${token}`).set("Accept", "application/json").set("Content-Type", "application/json");
+        const response = await request(app)
+            .patch(`${path}/123/userName`)
+            .send(update)
+            .set("Authorization", `Bearer ${token}`)
+            .set("Accept", "application/json")
+            .set("Content-Type", "application/json");
         expect(response.status).toBe(401);
     });
 
