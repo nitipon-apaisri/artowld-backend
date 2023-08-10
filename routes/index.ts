@@ -1,5 +1,37 @@
 import { Router } from "express";
-import { getHelloworldController } from "../controllers/exempleController";
+import * as userController from "../controllers/userController";
+import * as productController from "../controllers/productController";
+import * as imageController from "../controllers/imageController";
+import { auth } from "../middlewares/auth";
+import { validateUser } from "../middlewares/userAccess";
+import multer from "multer";
+
 const router = Router();
-router.get("/helloworld", getHelloworldController);
+// Multer config
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+
+// Routes
+//User routes
+router.get("/users", userController.getUsers);
+router.get("/user/:userId", userController.getUser);
+router.post("/user/signup", userController.registerUser);
+router.post("/user/signin", userController.signIn);
+router.patch("/user/:userId/userName", auth, validateUser, userController.updateUserName);
+router.patch("/user/:userId/email", auth, validateUser, userController.updateUserEmail);
+router.patch("/user/:userId/changePassword", auth, validateUser, userController.updateUserPassword);
+router.post("/get-reset-password-link", userController.createResetPasswordLink);
+router.post("/user/:userId/reset-password/:token", userController.resetPassword);
+router.delete("/user/:userId", auth, validateUser, userController.deleteUser);
+
+//Product routes
+router.get("/products", productController.getProducts);
+router.get("/product/:id", productController.getProduct);
+router.post("/user/:userId/product", auth, validateUser, productController.registerProduct);
+router.patch("/user/:userId/product/:id", auth, validateUser, productController.updateProduct);
+router.delete("/user/:userId/product/:id", auth, validateUser, productController.deleteProduct);
+
+//Image routes
+router.post("/user/:userId/image", auth, validateUser, upload.single("image"), imageController.uploadFile);
+router.get("/image/:id", imageController.retrieveImg);
 export default router;
