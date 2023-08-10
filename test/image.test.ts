@@ -34,7 +34,7 @@ describe("Image", () => {
             .attach("image", image, "test.jpg")
             .set("Accept", "application/json")
             .set("Content-Type", "multipart/form-data");
-        link = response.body.link.replace(`http://localhost:${process.env.PORT || 1997}`, "");
+        link = new URL(`${response.body.link}`).pathname;
         expect(response.status).toBe(200);
         expect(response.body).toHaveProperty("link");
     });

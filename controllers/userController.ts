@@ -149,9 +149,10 @@ const resetPassword = async (req: Request, res: Response, next: NextFunction) =>
 const createResetPasswordLink = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { email } = req.body;
+        const host = req.headers.host;
         const userId = await userModel.findOne({ email: email });
         const token = jwt.sign({ id: userId?._id }, process.env.JWT_SECRET as string, { expiresIn: "15m" });
-        res.status(200).json({ link: `http://localhost:${process.env.PORT || 1997}/api/v1/user/${userId?._id}/reset-password/${token}` }); //Also send the link to the user's email
+        res.status(200).json({ link: `http://${host}/api/v1/user/${userId?._id}/reset-password/${token}` }); //Also send the link to the user's email
     } catch (error) {
         throw new Error(error as string);
     }

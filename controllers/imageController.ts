@@ -6,6 +6,8 @@ import imageModel from "../models/imageModel";
 
 const uploadFile = async (req: Request, res: Response, next: NextFunction) => {
     const file = req.file;
+    const host = req.headers.host;
+    console.log(host);
     const imgObj = {
         _id: uuidv4(),
         name: file?.filename,
@@ -14,7 +16,7 @@ const uploadFile = async (req: Request, res: Response, next: NextFunction) => {
     };
     try {
         await imageModel.create(imgObj); // save the image to the db
-        res.status(200).json({ message: "Image uploaded successfully", link: `http://localhost:${process.env.PORT}/api/v1/image/${imgObj._id}` });
+        res.status(200).json({ message: "Image uploaded successfully", link: `http://${host}/api/v1/image/${imgObj._id}` });
     } catch (error) {
         const err = error as Error;
         res.status(500).json({ message: err.message });
