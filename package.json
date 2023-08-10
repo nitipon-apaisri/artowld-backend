@@ -4,8 +4,9 @@
     "description": "Backend template for Node.js",
     "main": "app.js",
     "scripts": {
-        "build": "tsc",
         "start": "node dist/app.js",
+        "build": "tsc",
+        "postinstall": "npm run build",
         "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/app.js\"",
         "test-ci": "jest --ci --verbose --silent --detectOpenHandles",
         "test": "jest --watchAll --verbose --silent --detectOpenHandles"
