@@ -34,6 +34,7 @@ describe("Image", () => {
             .attach("image", image, "test.jpg")
             .set("Accept", "application/json")
             .set("Content-Type", "multipart/form-data");
+        console.log(response.body);
         link = new URL(`${response.body.link}`).pathname;
         expect(response.status).toBe(200);
         expect(response.body).toHaveProperty("link");

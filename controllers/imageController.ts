@@ -1,25 +1,28 @@
 import { NextFunction, Request, Response } from "express";
 import { v4 as uuidv4 } from "uuid";
-import path from "path";
-import * as fs from "fs";
 import imageModel from "../models/imageModel";
 
 const uploadFile = async (req: Request, res: Response, next: NextFunction) => {
     const file = req.file;
+    const fileSize = file?.size;
     const host = req.headers.host;
-    console.log(host);
     const imgObj = {
         _id: uuidv4(),
         name: file?.filename,
         data: file?.buffer,
         contentType: file?.mimetype,
     };
-    try {
-        await imageModel.create(imgObj); // save the image to the db
-        res.status(200).json({ message: "Image uploaded successfully", link: `http://${host}/api/v1/image/${imgObj._id}` });
-    } catch (error) {
-        const err = error as Error;
-        res.status(500).json({ message: err.message });
+    const fileLimit = 5 * 1024 * 1024; // 5MB
+    if (fileSize! < fileLimit) {
+        try {
+            await imageModel.create(imgObj); // save the image to the db
+            res.status(200).json({ message: "Image uploaded successfully", link: `http://${host}/api/v1/image/${imgObj._id}` });
+        } catch (error) {
+            const err = error as Error;
+            res.status(500).json({ message: err.message });
+        }
+    } else {
+        res.status(400).json({ message: "File too large" });
     }
 };
 
