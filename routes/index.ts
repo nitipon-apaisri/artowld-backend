@@ -9,7 +9,17 @@ import multer from "multer";
 const router = Router();
 // Multer config
 const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+const upload = multer({
+    storage: storage,
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype === "image/jpeg" || file.mimetype === "image/png" || file.mimetype === "image/jpg") {
+            cb(null, true);
+        } else {
+            const error = new Error("Invalid file type, only JPEG and PNG is allowed!") as any;
+            cb(error, false);
+        }
+    },
+});
 
 // Routes
 //User routes
