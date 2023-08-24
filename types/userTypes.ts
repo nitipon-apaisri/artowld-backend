@@ -1,9 +1,6 @@
 interface userType {
     _id: string;
-    name: {
-        first: string;
-        last: string;
-    };
+    name: string;
     email: string;
     password: string;
     role: string;
