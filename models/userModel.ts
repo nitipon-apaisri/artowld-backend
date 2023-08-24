@@ -1,12 +1,9 @@
 import mongoose from "mongoose";
 import { userType } from "../types/userTypes";
 const { Schema } = mongoose;
-const user = {
+const user: object = {
     _id: String,
-    name: {
-        first: String,
-        last: String,
-    },
+    name: String,
     email: String,
     password: String,
     role: String,
