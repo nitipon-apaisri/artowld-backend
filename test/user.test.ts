@@ -32,11 +32,11 @@ describe("User", () => {
         userId = JSON.stringify(jwt.verify(token, process.env.JWT_SECRET as string));
         const response = await request(app).get(`${path}/${JSON.parse(userId)._id}`);
         expect(response.status).toBe(200);
-        expect(response.body.name.first).toBe(simpleUser.name.first);
+        expect(response.body.name).toBe(simpleUser.name);
     });
 
     test("should return 200 after update user name", async () => {
-        const update = { name: { first: "Miyamoto", last: "Musashi" } };
+        const update = { name: "Miyamoto Musashi" };
         const response = await request(app)
             .patch(`${path}/${JSON.parse(userId)._id}/userName`)
             .send(update)
@@ -47,7 +47,7 @@ describe("User", () => {
             .get(`${path}/${JSON.parse(userId)._id}`)
             .set("Authorization", `Bearer ${token}`);
         expect(response.status).toBe(200);
-        expect(user.body.name.first !== simpleUser.name.first).toBe(true);
+        expect(user.body.name !== simpleUser.name).toBe(true);
     });
 
     test("should return 200 after email", async () => {
