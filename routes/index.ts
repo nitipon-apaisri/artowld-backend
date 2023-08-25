@@ -25,6 +25,7 @@ const upload = multer({
 //User routes
 router.get("/users", userController.getUsers);
 router.get("/user/:userId", userController.getUser);
+router.get("/user/token/:token", userController.getUserByToken);
 router.post("/user/signup", userController.registerUser);
 router.post("/user/signin", userController.signIn);
 router.patch("/user/:userId/userName", auth, validateUser, userController.updateUserName);

@@ -34,7 +34,12 @@ describe("User", () => {
         expect(response.status).toBe(200);
         expect(response.body.name).toBe(simpleUser.name);
     });
-
+    test("should return a user after find a user by token", async () => {
+        const userToken = token;
+        const response = await request(app).get(`${path}/token/${userToken}`);
+        expect(response.status).toBe(200);
+        expect(response.body.user.name).toBe(simpleUser.name);
+    });
     test("should return 200 after update user name", async () => {
         const update = { name: "Miyamoto Musashi" };
         const response = await request(app)
