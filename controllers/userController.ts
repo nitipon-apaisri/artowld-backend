@@ -99,7 +99,7 @@ const signIn = async (req: Request, res: Response, next: NextFunction) => {
             if (!isPasswordMatch) {
                 res.status(403).json({ message: "Something went wrong" });
             } else {
-                res.status(200).json({ message: "Login success", token: jwt.sign(token, process.env.JWT_SECRET as string) });
+                res.status(200).json({ message: "Login success", token: jwt.sign(token, process.env.JWT_SECRET as string), userId: findUser._id });
             }
         } catch (error) {
             const err = error as Error;
